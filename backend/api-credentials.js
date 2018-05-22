@@ -1,1 +1,0 @@
-module.exports = { ibmUserName: "9ad2c2d3-015a-4fc9-8c69-f4283e5ed194", ibmPassword: "0W7Xsw8kvfaA" };
