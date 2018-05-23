@@ -4,8 +4,8 @@ const axios = require('axios')
 const apiCred = require('./api-credentials.js')
 
 var nlu = new NaturalLanguageUnderstandingV1({
-    username: apiCred.ibmUserName,
-    password: apiCred.ibmPassword,
+    username: "9ad2c2d3-015a-4fc9-8c69-f4283e5ed194",
+    password: "0W7Xsw8kvfaA",
     version: '2018-04-05',
     url: 'https://gateway.watsonplatform.net/natural-language-understanding/api/'
 });
@@ -16,8 +16,8 @@ nlu.analyze(
       features: {
         //Supported languages for sentiment: Arabic, English, French, German, Italian, Korean, Portuguese, Russian, Spanish
         sentiment: {},
-        concepts: {},
-        keywords: {},
+        //concepts: {},
+        //keywords: {},
       }
     },
     function(err, response) {
