@@ -35,12 +35,12 @@ for (var d=0; d<7 ;d++) {
     let day = moment().subtract(d, 'days')
     let dayF = day.format("YYYY-MM-DD")
     console.log(dayF)
-var params = { q: 'bitcoin news price', type: 'popular', until: dayF};
+var params = { q: 'bitcoin news', until: dayF};
 client.get('search/tweets', params, function (error, tweets, response) {
     if (!error) {
         //console.log(tweets.statuses.length);
         let twitterData = []
-
+        console.log(tweets.statuses.length)
         for (i = 0; i < tweets.statuses.length; i++) {
             let twitterObj = {};
             if (tweets.statuses[i].retweet_count >= 0) {
