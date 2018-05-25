@@ -77,7 +77,7 @@ import {Line as LineChart} from 'react-chartjs';
       let data = this.state.serverData;
       let sortedData = data.sort(function(a, b){
         let dateA = Number(new Date(a.date))
-        let dateB = Number(new Date(b.date))      
+        let dateB = Number(new Date(b.date))
         return dateA - dateB;
       })
   
