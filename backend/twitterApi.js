@@ -9,10 +9,11 @@ mongoose.connect('mongodb://localhost/TwitterWatsonDB')
 const db = mongoose.connection
 
 db.on('open', ()=>{
-    console.log('connecter to mongodb TwitterWatson!')
+    console.log('connected to mongodb!')
 });
 
 const TwitterWatson = require('./models/TwitterWatson')
+const BitcoinPrice = require('./models/BitcoinPrice')
 
 // Watson API
 var nlu = new NaturalLanguageUnderstandingV1({
@@ -98,7 +99,7 @@ client.get('search/tweets', params, function (error, tweets, response) {
                                 console.log(sentimentDB);
                             })
                             .catch(error => {
-                                console.log(error)
+                                 console.log(error)
                             })
                     }
                 },
@@ -107,3 +108,29 @@ client.get('search/tweets', params, function (error, tweets, response) {
     }
 });
 }
+
+//GET Bitcoin Price Data
+let startDate = moment().subtract(7, 'days').format("YYYY-MM-DD")
+let endDate = moment().format("YYYY-MM-DD")
+axios.get('https://api.coindesk.com/v1/bpi/historical/close.json?'+'start='+startDate+'&end='+endDate)
+.then(result=>{
+    let coinbasePriceApiData = result.data.bpi
+    for (let prop in coinbasePriceApiData){
+        let bitcoinPrice = BitcoinPrice({
+            date: prop,
+            price: coinbasePriceApiData[prop]
+        });
+        console.log(bitcoinPrice)
+        bitcoinPrice.save()
+            .then(bitcoinDB =>{
+                console.log(bitcoinDB)
+            })
+            .catch(error =>{
+                console.log(error)
+            })
+    }
+  console.log(coinbasePriceApiData)
+})
+.catch(error=>{
+  console.log(error)
+})

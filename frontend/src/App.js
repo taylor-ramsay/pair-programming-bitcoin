@@ -9,6 +9,8 @@ import {Line as LineChart} from 'react-chartjs';
       labels: xAxis,
       datasets: [
         {
+          scaleFontColor: "#ff0000",
+          fontColor: 'orange',
           label: 'My First dataset',
           fillColor: 'rgba(220,220,220,0.2)',
           strokeColor: 'rgba(220,220,220,1)',
@@ -17,12 +19,26 @@ import {Line as LineChart} from 'react-chartjs';
           pointHighlightFill: '#fff',
           pointHighlightStroke: 'rgba(220,220,220,1)',
           data: yAxis,
-        }
+          yAxisID: 'left-y-axis',
+        },
       ]
     }
   }
   
   const options = {
+    scales: {
+      yAxes: [{
+          id: 'left-y-axis',
+          type: 'linear',
+          position: 'left',
+          display: true,
+      }, {
+          id: 'right-y-axis',
+          type: 'linear',
+          position: 'right',
+          display: true,
+      }]
+    },
     scaleShowGridLines: true,
     scaleGridLineColor: 'rgba(0,0,0,.05)',
     scaleGridLineWidth: 1,
@@ -42,8 +58,7 @@ import {Line as LineChart} from 'react-chartjs';
   
   const styles = {
     graphContainer: {
-      border: '1px solid black',
-      padding: '15px'
+      //color:'white'
     }
   }
   
@@ -54,8 +69,10 @@ import {Line as LineChart} from 'react-chartjs';
       this.state = {
         data: {},
         serverData: [],
-        yAxis: [], 
-        xAxis: []
+        bitcoinData: [],
+        yAxis: [],
+        yAxis2: [], 
+        xAxis: [],
       }
     }
 
@@ -65,8 +82,16 @@ import {Line as LineChart} from 'react-chartjs';
           let newDatafromServer = result.data;
           this.setState({ serverData: newDatafromServer })
         })
-        .then(result => {
-          this.cleanTWData()
+        .then(result=>{
+          axios.get('http://localhost:8080/bitcoin-price')
+          .then(result=>{
+            let bitcoinPriceDataFromServer = result.data
+            console.log(bitcoinPriceDataFromServer)
+            this.setState({ bitcoinData: bitcoinPriceDataFromServer })
+          })
+          .then(result => {
+            this.cleanTWData()
+          })
         })
         .catch(error => {
           console.log(error)
@@ -103,27 +128,62 @@ import {Line as LineChart} from 'react-chartjs';
           unique_dates.push(formattedDate)
         }
       }
-      // console.log(unique_avg)
-      // console.log(unique_dates)
+      console.log(this.state.bitcoinData)
+      let bitcoinPrices = this.state.bitcoinData;
+      let sortedBitcoinPrices = bitcoinPrices.sort(function(a, b){
+        let dateA = Number(new Date(a.date))
+        let dateB = Number(new Date(b.date))
+        return dateA - dateB;
+      })
+      console.log(bitcoinPrices)
+      let bitcoinPricesOnly = []
+      for(let i=0; i<bitcoinPrices.length; i++){
+        bitcoinPricesOnly.push(sortedBitcoinPrices[i].price)
+      }
+
       this.setState({
         yAxis: unique_avg, 
         xAxis: unique_dates,
-        data: chartData(unique_dates, unique_avg)
+        dataTW: chartData(unique_dates, unique_avg),
+        dataBC: chartData(unique_dates, bitcoinPricesOnly)
       })
     }
   
     render() {
 
-      const showChart = (this.state.xAxis.length > 0) ? <LineChart data={this.state.data} options={options} width="1000" height="450"/> : console.log('something else')
+      const showChart = (this.state.xAxis.length > 0) ? <LineChart data={this.state.dataTW} options={options} width="500" height="250" style={{"color":"white"}} /> : console.log('something else')
+      const showChart2 = (this.state.xAxis.length > 0) ? <LineChart data={this.state.dataBC} options={options} width="500" height="250"/> : console.log('something else')
 
 
       return (
         <div style={styles.graphContainer}>
-          {showChart}
+
+          <div className="container">
+            <div className="row">
+              <div className="col-2">
+              </div>
+              <div className="col-8">
+              <center>
+              <h1>Bitcoin Sentiment & Price Tracker</h1>
+              <h2>Bitcoin Sentiment</h2>
+                {showChart}
+                </center>
+                <center>
+                <h2>Bitcoin Price</h2>
+                {showChart2}
+                <br />
+                <br />
+                <h3>Powered by IBM Watson's Natural Language Processing, Twitter's API, and Coinbase's API</h3>
+                </center>
+              </div>
+              <div className="col-2">
+
+              </div>
+            </div>
+          </div>
         </div>
       )
     }
   }
-
   
   export default LineChartExample;

@@ -25,9 +25,20 @@ db.on('open', () => {
 });
 
 const TwitterWatson = require('./models/TwitterWatson')
+const BitcoinPrice = require('./models/BitcoinPrice')
 
 app.get('/data', (req, res)=>{
     TwitterWatson.find({})
+        .then(result => {
+            res.send(result);
+        })
+        .catch(error => {
+            console.log(error);
+        })
+})
+
+app.get('/bitcoin-price', (req, res)=>{
+    BitcoinPrice.find({})
         .then(result => {
             res.send(result);
         })
