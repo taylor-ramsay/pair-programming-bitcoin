@@ -6,6 +6,10 @@ const bodyParser = require('body-parser');
 const PORT = process.env.PORT || 8080
 const dev = app.get('env') !== 'production'
 
+setInterval(function () {
+apis.runApis()
+}, 86400000);
+
 app.use((req, res, next) => {
     res.header("Access-Control-Allow-Origin", "*");
     res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
