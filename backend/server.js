@@ -1,8 +1,10 @@
 const express = require('express');
+const apis = require('./twitterApi.js');
 const app = express();
 const mongoose = require('mongoose')
-
-var bodyParser = require('body-parser');
+const bodyParser = require('body-parser');
+const PORT = process.env.PORT || 8080
+const dev = app.get('env') !== 'production'
 
 app.use((req, res, next) => {
     res.header("Access-Control-Allow-Origin", "*");
@@ -10,14 +12,10 @@ app.use((req, res, next) => {
     next();
 });
 
-// parse application/x-www-form-urlencoded
-app.use(bodyParser.urlencoded({ extended: false }));       
-// parse application/json
+app.use(bodyParser.urlencoded({ extended: false }));
+
 app.use(bodyParser.json());
 
-// call . connect() to connect to mongod server
-mongoose.connect('mongodb://localhost/TwitterWatsonDB')
-      
 const db = mongoose.connection;
 
 db.on('open', () => {
@@ -27,8 +25,18 @@ db.on('open', () => {
 const TwitterWatson = require('./models/TwitterWatson')
 const BitcoinPrice = require('./models/BitcoinPrice')
 
-app.get('/data', (req, res)=>{
-    TwitterWatson.find({})
+app.get('/data', (req, res) => {
+    TwitterWatson.find({}).sort('-date')
+        .then(result => {
+            res.json(result);
+        })
+        .catch(error => {
+            console.log(error);
+        })
+})
+
+app.get('/bitcoin-price', (req, res) => {
+    BitcoinPrice.find({}).sort('-date')
         .then(result => {
             res.send(result);
         })
@@ -37,16 +45,28 @@ app.get('/data', (req, res)=>{
         })
 })
 
-app.get('/bitcoin-price', (req, res)=>{
-    BitcoinPrice.find({})
-        .then(result => {
-            res.send(result);
-        })
-        .catch(error => {
-            console.log(error);
-        })
-})
+if (!dev) {
+    console.log('Production')
+    app.disable('x-powered-by')
+    app.use(express.static(__dirname + '/frontend/build'));
+    app.get('*', (req, res) => res.sendFile(__dirname + '/frontend/build/index.html'));
+    mongoose.connect('mongodb://localhost/TwitterWatsonDB')
+}
 
-app.listen(8080, ()=>{
-    console.log('server listen at 8080, ctrl+c to exit!')
-})
+if (dev) {
+    console.log('Development')
+    app.use(express.static(__dirname + '/frontend/public'));
+    mongoose.connect('mongodb://localhost/TwitterWatsonDB')
+    //CORS
+    app.use((req, res, next) => {
+        res.header("Access-Control-Allow-Origin", "*");
+        res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+        res.header('Access-Control-Allow-Methods', 'PUT, POST, GET, DELETE, OPTIONS');
+        next();
+    });
+}
+
+//Port 8080
+app.listen(PORT, () => {
+    console.log("server listening on port", PORT);
+});

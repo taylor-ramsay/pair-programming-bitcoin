@@ -1,0 +1,202 @@
+html, body {height:100%;}
+
+.body {
+  font-family: 'Roboto', sans-serif;
+}
+
+h1, h2, h3, h4, h5 {
+  font-family: 'Roboto Mono', monospace;
+}
+
+h1 {
+  font-weight: 700;
+}
+
+.App {
+  text-align: center;
+}
+
+.App-logo {
+  animation: App-logo-spin infinite 20s linear;
+  height: 80px;
+}
+
+.App-header {
+  background-color: #222;
+  height: 150px;
+  padding: 20px;
+  color: white;
+}
+
+.App-title {
+  font-size: 1.5em;
+}
+
+.App-intro {
+  font-size: large;
+}
+
+@keyframes App-logo-spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+.greyed-out {
+  color:#A0B2C5;
+  margin: 10px;
+}
+
+.positive {
+  color: #73B72E !important;
+}
+
+.neutral {
+  color: #FFA400 !important;
+}
+
+.negative {
+  color: #BF5748 !important;
+}
+
+.outer-wrapper{
+  display: inline-block;
+  margin: 5px 15px;
+  padding: 25px 15px;
+  background: #eee;
+  min-width: 50px;
+}
+
+.column-wrapper{
+  height: 200px;
+  width: 20px;
+  background: #CFD8DC;
+  transform: rotate(180deg);
+  margin: 0 auto;
+}
+
+.column{
+  width: 20px;
+  height: 50%;
+  background: #90A4AE;
+}
+
+.percentage, .value{
+  margin-top: 10px;
+  padding: 5px 10px;
+  color: #FFF;
+  background: #263238;
+  position: relative;
+  border-radius: 4px;
+  text-align: center;
+}
+
+.value{
+  background: #7986CB;
+}
+
+.badge{
+  position: relative;
+  display: inline-block;
+  top: 0px;
+}
+
+meter {
+  width: 100%;
+  height: 15px;
+  border: 1px solid #ccc;
+  border-radius: 3px;
+}
+
+meter::-webkit-meter-bar {
+  background: none; /* Required to get rid of the default background property */
+  background-color: whiteSmoke;
+  box-shadow: 0 5px 5px -5px #333 inset;
+}
+
+meter::-webkit-meter-optimum-value {
+  background: #68AE29; /* Green */
+  border-radius: 3px;
+}
+
+meter::-webkit-meter-suboptimum-value {
+  background: #FFD100; /* Yellow */
+  border-radius: 3px;
+}
+
+meter::-webkit-meter-even-less-good-value {
+  background: #B74D3F; /* Red */
+  border-radius: 3px;
+}
+
+meter::-moz-meter-bar {
+  background: none; /* Required to get rid of the default background property */
+  background-color: whiteSmoke;
+  box-shadow: 0 5px 5px -5px #333 inset;
+}
+
+meter:-moz-meter-optimum::-moz-meter-bar {
+  background: #68AE29; /* Green */
+  border-radius: 3px;
+}
+
+meter:-moz-meter-sub-optimum::-moz-meter-bar {
+  background: #FFD100; /* Yellow */
+  border-radius: 3px;
+}
+
+meter:-moz-meter-sub-sub-optimum::-moz-meter-bar {
+  background: #B74D3F; /* Red */
+  border-radius: 3px;
+}
+
+.teal2 {
+  background-color: #FF4AB0 !important
+}
+
+.white-text{
+  font-family: 'Roboto', sans-serif;
+}
+
+.methodology{
+  margin-bottom: 0px;
+}
+
+.highlight-text {
+  font-family: 'Roboto Mono', monospace;
+  font-weight: 800;
+  font-size: 25px;
+}
+
+.card-panel {
+  border-radius: 0px;
+  margin: 0px;
+}
+
+.blue-background {
+  background-color: #00DBFF
+}
+
+.powered-by {
+  padding-bottom: 0px;
+  padding-top: 0px;
+}
+
+.header-panels {
+  -webkit-box-shadow: none;
+  box-shadow: none;
+}
+
+.sentiment-text {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 30px;
+}
+
+.sentiment-icon {
+  padding-left: 10px;
+}
+
+.header-link {
+  color: #5031AB;
+}
