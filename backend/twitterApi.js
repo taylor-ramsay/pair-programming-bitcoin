@@ -2,7 +2,7 @@ var Twitter = require('twitter');
 const NaturalLanguageUnderstandingV1 = require('watson-developer-cloud/natural-language-understanding/v1.js');
 const axios = require('axios')
 const mongoose = require('mongoose')
-const moment = require('moment')
+const moment = require('moment-timezone')
 
 mongoose.connect('mongodb://localhost/TwitterWatsonDB')
 const db = mongoose.connection
@@ -36,7 +36,6 @@ module.exports = {
         for (var d = 0; d < 7; d++) {
             let day = moment().subtract(d, 'days')
             let dayF = day.format("YYYY-MM-DD")
-            console.log(dayF)
             var params = { q: 'bitcoin price', until: dayF, count: 100 };
             client.get('search/tweets', params, function (error, tweets, response) {
                 if (!error) {
@@ -45,7 +44,7 @@ module.exports = {
                         let twitterObj = {};
                         if (tweets.statuses[i].retweet_count >= 2) {
                             let twitterObj = {
-                                date: tweets.statuses[i].created_at,
+                                date: moment(tweets.statuses[i].created_at).tz('GMT'),
                                 text: tweets.statuses[i].text,
                                 retweet_count: tweets.statuses[i].retweet_count,
                                 user_location: tweets.statuses[i].user.location
@@ -99,18 +98,21 @@ module.exports = {
         //GET Bitcoin Price Data
         let startDate = moment().subtract(7, 'days').format("YYYY-MM-DD")
         let endDate = moment().format("YYYY-MM-DD")
+        console.log(endDate)
         axios.get('https://api.coindesk.com/v1/bpi/historical/close.json?' + 'start=' + startDate + '&end=' + endDate)
             .then(result => {
+                console.log('https://api.coindesk.com/v1/bpi/historical/close.json?' + 'start=' + startDate + '&end=' + endDate)
                 let coinbasePriceApiData = result.data.bpi
                 for (let prop in coinbasePriceApiData) {
                     let bitcoinPrice = BitcoinPrice({
-                        date: prop,
+                        date: moment(prop).tz('GMT'),
                         price: coinbasePriceApiData[prop]
                     });
+
                     //console.log(bitcoinPrice)
                     bitcoinPrice.save()
                         .then(bitcoinDB => {
-                            //console.log(bitcoinDB)
+                            console.log(bitcoinDB)
                         })
                         .catch(error => {
                             console.log(error)

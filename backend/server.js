@@ -7,8 +7,8 @@ const PORT = process.env.PORT || 8080
 const dev = app.get('env') !== 'production'
 
 setInterval(function () {
-apis.runApis()
-}, 86400000);
+    apis.runApis()
+}, 43200000);
 
 app.use((req, res, next) => {
     res.header("Access-Control-Allow-Origin", "*");

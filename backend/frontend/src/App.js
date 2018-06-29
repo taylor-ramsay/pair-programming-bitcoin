@@ -34,7 +34,6 @@ class LineChartExample extends React.Component {
   }
 
   componentDidMount() {
-
     axios.all([this.getData(), this.getBTC()])
       .then(axios.spread((getData, getBTC) => {
         this.setState({
@@ -53,7 +52,6 @@ class LineChartExample extends React.Component {
 
   createTweetData = () => {
     let data = this.state.serverData
-    console.log(data)
     let positiveTweets = data.filter((el) => {
       if (moment(el.date).isBetween(moment().subtract(7, 'days'), moment()))
         return el.label === "positive"
@@ -69,7 +67,6 @@ class LineChartExample extends React.Component {
     let sortedPositiveTweets = _.orderBy(positiveTweets, 'score', 'desc')
     let sortedNegativeTweets = _.sortBy(negativeTweets, 'score')
     let sortedNeutralTweets = _.orderBy(neutralTweets, 'date', 'desc')
-    console.log(sortedPositiveTweets)
     this.setState({
       recentPositiveTweets: sortedPositiveTweets,
       recentNegativeTweets: sortedNegativeTweets,
@@ -88,29 +85,41 @@ class LineChartExample extends React.Component {
     let unique_dates = [];
     let unique_avg = [];
     let sum = 0;
-    let count = 1;
-    for (let i = 0; i < sortedData.length - 1; i++) {
-      let formattedDate = moment(sortedData[i].date).format('YYYY-MM-DD');
-      let formattedDateNext = moment(sortedData[i + 1].date).format('YYYY-MM-DD');
+    let count = 0;
+    let sumLast = 0;
+    let countLast = 0;
+
+    for (let i = 0; i < sortedData.length; i++) {
+      let formattedDate = moment(sortedData[i].date).format('YYYY-MM-DD')
       let dataScore = sortedData[i].score
-      if (formattedDate === formattedDateNext) {
+      if (formattedDate !== moment(sortedData[sortedData.length - 1].date).format('YYYY-MM-DD')) {
+        let formattedDateNext = moment(sortedData[i + 1].date).format('YYYY-MM-DD');
+        if (formattedDate === formattedDateNext) {
+          sum += dataScore
+          count += 1
+        }
+        if (formattedDate !== formattedDateNext) {
+          sum += dataScore
+          count += 1
+          let average = sum / count
+          unique_avg.push(parseFloat(average).toFixed(2))
+          unique_dates.push(formattedDate)
+          sum = 0;
+          count = 0
+        }
+      }
+      else {
         sum += dataScore
         count += 1
-      }
-      if (formattedDate !== formattedDateNext) {
-        var average = sum / count
-        unique_avg.push(parseFloat(average).toFixed(2))
-        sum = 0;
-        count = 1
-        unique_dates.push(formattedDate)
+        if (i == sortedData.length - 1) {
+          let average = sum / count     
+          unique_avg.push(parseFloat(average).toFixed(2))
+          unique_dates.push(formattedDate)
+        }
       }
     }
     let bitcoinPrices = this.state.bitcoinData;
-    let sortedBitcoinPrices = bitcoinPrices.sort(function (a, b) {
-      let dateA = Number(new Date(a.date))
-      let dateB = Number(new Date(b.date))
-      return dateA - dateB;
-    })
+    let sortedBitcoinPrices = _.orderBy(bitcoinPrices, 'date', 'asc')
     let bitcoinPricesOnly = []
     for (let i = 0; i < bitcoinPrices.length; i++) {
       bitcoinPricesOnly.push(parseFloat(sortedBitcoinPrices[i].price).toFixed(2))
@@ -125,6 +134,7 @@ class LineChartExample extends React.Component {
   }
 
   render() {
+
     const data = {
       labels: this.state.xAxis,
       datasets: [{
@@ -189,6 +199,7 @@ class LineChartExample extends React.Component {
     }
 
     return (
+      
       <div>
         <center>
           <h1>Bitcoin Sentiment</h1>
@@ -227,9 +238,9 @@ class LineChartExample extends React.Component {
             <center>
 
 
-<Line data={data} options={options} />
+              <Line data={data} options={options} />
 
-              
+
             </center>
           </div>
           <div className="col l2">
